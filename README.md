@@ -4,6 +4,10 @@
 
 모의고사·수능 국어 **시험지와 해설지**(PDF, HWPX)를 AI에게 주면 문항 풀이 수업용 HTML 파일이 나옵니다. 화면 넘기기·판서·반별 저장은 [exploragram](https://github.com/N-lifescience/exploragram) 엔진이 맡고, 이 폴더의 `munhang.js`가 문항 수업 부품을 더합니다.
 
+> **바탕으로 한 원본**: N-lifescience의 exploragram 엔진 위에 만들었습니다.
+> 원본 저장소 https://github.com/N-lifescience/exploragram · 이 하네스가 쓰는 판 `exploragram@2.8.1` (jsDelivr로 불러옴)
+> 엔진(화면 넘기기, 툴바, 판서, 퀴즈·빈칸·단계 부품, 점검 `Exploragram.audit()`)은 원본 그대로 쓰고, 문항 수업 부품(munhang)·교실 도구(kit)·국어 예시 양식(ppt.css)·세트 → HTML 만들기(gen.mjs)를 이 저장소에서 더했습니다.
+
 이 공유판에는 **실시간 수업 기능(학생 기기가 교사 화면을 따라오고 답이 모이는 기능)이 없습니다.** 전자칠판이나 학생 기기 없이 TV·빔프로젝터·노트북으로 수업하는 교실을 생각한 판입니다. 수업 파일은 외부 서버에 아무것도 보내지 않습니다.
 
 ## 예시 먼저 보기

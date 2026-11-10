@@ -3,6 +3,7 @@
 
 > **AI에게**: 이 파일 하나가 지침 전체다. 선생님이 모의고사 시험지와 해설지를 주면 이 지침대로 세트 데이터 파일(.mjs) 하나를 만든다. 선생님 PC에 Node.js가 없으면 문항 수업 HTML 파일 하나를 직접 만든다.
 > 만들기 전에 인터뷰하고 설계표를 확인받는다. HTML을 직접 쓸 때 `<head>`의 여섯 줄은 그대로 둔다(지금 환경에서 안 열려도 교실 브라우저가 연다).
+> 바탕 엔진: N-lifescience의 exploragram(https://github.com/N-lifescience/exploragram, 2.8.1). 결과물 전달 메모나 안내에 출처를 밝힌다.
 > 엔진 주소: munhang/munhang.css·js, munhang/kit.css·js, exploragram@2.8.1 (묶기 전에는 수업 파일 옆 munhang 폴더에 하네스 engine 폴더의 파일을 둔다)
 
 
