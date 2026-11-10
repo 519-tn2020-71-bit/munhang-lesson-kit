@@ -15,6 +15,7 @@ section.slide > h2 small { font-size: 24px; color: #6B6B6B; }
 b.mh-boxw { border: 2px solid #333; padding: 0 4px; font-weight: 700; }
 .mh-read img, .mh-view img { max-height: 320px; width: auto; max-width: 100%; margin: 0 auto; }
 
+
 </style>
 </head>
 <body data-theme="ppt">
@@ -296,18 +297,12 @@ b.mh-boxw { border: 2px solid #333; padding: 0 4px; font-weight: 700; }
   </div>
 </section>
 
-<section class="slide" id="q11-key" data-sec="⑤ 11번" data-title="11번 정리 (1/2)">
+<section class="slide" id="q11-key" data-sec="⑤ 11번" data-title="11번 정리">
   <h2 class="mh-h2s">11. ㉠의 이유로 가장 적절한 것은?</h2>
-  <ul class="mh-key small" data-ai="선지별 근거 요약">
+  <ul class="mh-key small tight" data-ai="선지별 근거 요약">
     <li><span class="t">① 중력 가속도가 작용하는 방향에 따라 가속도 센서의 측정값이 달라지기 때문이다.</span><span class="r step">맞는 내용이지만, 각도가 빨리 변할 때 자이로 센서를 더 크게 반영하는 이유는 되지 않는다 → 부적절</span></li>
     <li><span class="t">② 자세가 급변할 때 생기는 순간적인 오차를 중력 가속도의 방향을 이용해 보완할 수 있기 때문이다.</span><span class="r step">자세가 급변할 때의 순간적인 오차는 가속도 센서 쪽 오차다 → 부적절</span></li>
     <li><span class="t">③ 자이로 센서의 측정값을 시간에 따라 누적해야 드론이 기울어진 각도를 추정할 수 있기 때문이다.</span><span class="r step">맞는 내용이지만 ㉠의 이유가 되지 않는다 → 부적절</span></li>
-  </ul>
-</section>
-
-<section class="slide" id="q11-key-2" data-sec="⑤ 11번" data-title="11번 정리 (2/2)">
-  <h2 class="mh-h2s">11. ㉠의 이유로 가장 적절한 것은?</h2>
-  <ul class="mh-key small" data-ai="선지별 근거 요약">
     <li><span class="t">④ 짧은 시간 동안에는 자이로 센서의 측정값을 누적해도 각도 추정값에 오차가 누적되지 않기 때문이다.</span><span class="r step">측정값을 누적하면 미세한 오차도 함께 누적된다 → 부적절</span></li>
     <li class="ok"><span class="t">⑤ 급격한 자세 변화를 각도 추정값에 반영하고 불규칙한 가속도로 인한 오차의 영향을 줄일 수 있기 때문이다.</span><span class="r step">자이로 센서는 급격한 자세 변화를 민감하게 감지하고, 가속도 센서에는 불규칙한 가속도로 순간 오차가 생긴다 → 적절</span></li>
   </ul>
@@ -356,18 +351,12 @@ b.mh-boxw { border: 2px solid #333; padding: 0 4px; font-weight: 700; }
   </div>
 </section>
 
-<section class="slide" id="q12-key" data-sec="⑤ 12번" data-title="12번 정리 (1/2)">
+<section class="slide" id="q12-key" data-sec="⑤ 12번" data-title="12번 정리">
   <h2 class="mh-h2s">12. 윗글을 바탕으로 &lt;보기&gt;를 이해한 내용으로 가장 적절한 것은? [3점]</h2>
-  <ul class="mh-key small" data-ai="선지별 근거 요약">
+  <ul class="mh-key small tight" data-ai="선지별 근거 요약">
     <li><span class="t">① 각도 추정값과 목표 각도 간의 편차가 지속적으로 누적됨에 따라, P 제어가 누적된 편차에 비례하여 출력값을 계속 키워 발생한 현상이겠군.</span><span class="r step">P 제어는 누적된 편차가 아니라 현재 편차의 크기에 비례한다 → 부적절</span></li>
     <li class="ok"><span class="t">② 자이로 센서의 측정값을 누적하면서 생긴 오차가 상보 필터에 의해 보정되지 않아, I 제어가 이로 인한 편차를 누적하여 발생한 현상이겠군.</span><span class="r step">시간이 지나며 생긴 미세한 편차는 자이로 센서의 누적 오차 때문이다 → 적절</span></li>
     <li><span class="t">③ 가속도 센서의 측정값이 크게 반영됨에 따라, 불규칙한 가속도로 인해 생긴 순간적인 오차가 누적되어 출력값이 점차 커진 결과 발생한 현상이겠군.</span><span class="r step">가속도 센서의 오차는 순간적인 오차라서 시간에 따라 누적되며 커지지 않는다 → 부적절</span></li>
-  </ul>
-</section>
-
-<section class="slide" id="q12-key-2" data-sec="⑤ 12번" data-title="12번 정리 (2/2)">
-  <h2 class="mh-h2s">12. 윗글을 바탕으로 &lt;보기&gt;를 이해한 내용으로 가장 적절한 것은? [3점]</h2>
-  <ul class="mh-key small" data-ai="선지별 근거 요약">
     <li><span class="t">④ 드론의 각속도가 0에 가까워진 상태에서 자이로 센서의 측정값이 크게 반영됨에 따라, 목표 각도와 각도 추정값의 편차가 없다고 판단하여 발생한 현상이겠군.</span><span class="r step">자이로 센서를 크게 반영하면 오차가 누적되어 편차가 계속 늘어난다 → 부적절</span></li>
     <li><span class="t">⑤ 가속도 센서에서 발생한 순간적인 오차가 상보 필터에 의해 보정되지 않아, 가속도 센서의 측정값을 더 크게 반영하여 각도 추정값의 오차가 점차 커진 결과 발생한 현상이겠군.</span><span class="r step">〈보기〉는 수평 자세로 정지 비행하던 중 미세한 편차가 시간에 따라 쌓인 상황이다 → 부적절</span></li>
   </ul>

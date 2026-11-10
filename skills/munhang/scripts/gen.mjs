@@ -37,12 +37,13 @@ const shortTab = (p) => {
 // 높이 어림(px): 읽기 글 26px·줄 45px·한 줄 40자, 설명 상자 22px·줄 33px·한 줄 46자
 const hText = (s) => Math.ceil(plain(s).length / 40) * 45 + 10;
 const hNote = (s) => Math.ceil(plain(s).length / 44) * 33 + 22;
-const BUDGET = 460;
+const BUDGET = 520;
 
 // ---------- 활동지·교과서 그대로(디지털 교과서) ----------
 // set.sheet = [{ title: '장 제목', sec: '목차 묶음(선택)', blocks: [ … ] }, …]  장 하나 = 화면 한 장
-//   ['text', '본문·활동지 글 그대로. {{답}}은 누르면 열리는 빈칸, [[2:구절]] 형광, **굵게**. 빈 줄은 문단 나눔']
-//   ['q', '물음 그대로', '예시 답(선택, →로 연다)', { write: true }]   write면 학생이 적는 칸을 둔다
+//   ['text', '본문·활동지 글 그대로. {{답}}은 누르면 열리는 빈칸, [[2:구절]] 형광, **굵게**, [[g~core:주석]] →로 여는 파란 주석. 빈 줄은 문단 나눔']
+//     글은 고치지 않되, 읽기 자료에는 범주 형광(뜻은 set.legend)과 파란 주석을 얹는다. 형광 없는 긴 글은 경고한다
+//   ['q', '물음 그대로', '예시 답(선택, →로 연다)', { write: true }]   write면 학생이 적는 칸을 둔다(보내기 없음, 실시간 뺌)
 //   ['quiz', '물음', ['선지1', '선지2', …], 정답 번호, ['선지별 까닭', …](선택)]
 //   ['table', [['머리', '머리'], ['칸 {{답}}', '칸'], …]]   첫 줄이 머리
 //   ['box', '상자 제목', '자료 글']   (학습 목표, 보기, 참고 자료)
@@ -51,7 +52,10 @@ const SHEET_CSS = `.mh-sheet { border: 2px solid var(--ppt-line, #BDBDBD); borde
 .mh-sheet p { margin: 0 0 6px; }
 .mh-q { margin: 0 0 14px; font-size: 26px; line-height: 1.6; }
 .mh-qt { font-size: 26px; font-weight: 700; margin: 0 0 6px; }
-.mh-q .short > p { display: none; }
+.mh-write { display: block; width: 100%; box-sizing: border-box; min-height: 84px; padding: 8px 14px; border: 2px solid var(--ppt-line, #BDBDBD); border-radius: 8px; background: #FFFFFF; font: inherit; font-size: 24px; line-height: 1.5; resize: vertical; }
+.mh-write:focus { outline: none; border-color: var(--ppt-blue, #2B59C3); }
+.mh-sheet .mh-gloss { margin: 0 0 6px 30px; }
+.mh-sheet-legend { margin: -4px 0 8px; font-size: 20px; }
 .mh-ans { color: var(--ppt-blue, #2B59C3); font-size: 24px; margin: 6px 0 0; padding-left: 14px; border-left: 4px solid var(--ppt-blue, #2B59C3); }
 .mh-box { border: 2px dashed var(--ppt-line, #BDBDBD); border-radius: 10px; padding: 10px 20px; font-size: 24px; line-height: 1.6; margin: 0 0 14px; }
 .mh-box .k { display: block; font-weight: 800; color: var(--ppt-blue, #2B59C3); margin-bottom: 2px; }
@@ -59,16 +63,18 @@ section.slide table.compare.mh-sheet-t { font-size: 23px; margin: 0 0 14px; }
 `;
 function sheetSlides(set, slide) {
   set.sheet.forEach((pg, pi) => {
-    let h = 0;
+    let h = 0, hl = false;
     const html = pg.blocks.map((b, bi) => {
       const [kind, a, c, d, e] = b;
       if (kind === 'text') {
-        h += Math.ceil(plain(a).length / 40) * 44 + 40;
+        h += Math.ceil(plain(a).length / 40) * 44 + 40 + (String(a).match(/\[\[g~/g) || []).length * 36;
+        if (plain(a).length > 120 && !/\[\[[1-5]:/.test(a)) console.warn(`활동지 ${pi + 1}장「${plain(pg.title)}」: 긴 글에 형광이 없다. 핵심 문장·근거에 [[2:…]]~[[5:…]]를 칠한다`);
+        if (/\[\[[1-5]:/.test(a)) hl = true;
         return `  <div class="mh-sheet">${String(a).split(/\n\n+/).map((t) => `<p>${mark(t).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
       }
       if (kind === 'q') {
         h += Math.ceil(plain(a).length / 42) * 42 + (d && d.write ? 110 : 0) + (c ? Math.ceil(plain(c).length / 48) * 38 + 10 : 0) + 14;
-        return `  <div class="mh-q"><p class="mh-qt">${mark(a)}</p>${d && d.write ? `<div class="short" data-ph="여기에 적어요"><p>${attr(plain(a))}</p></div>` : ''}${c ? `<p class="mh-ans step"><b>예시 답</b> ${mark(c)}</p>` : ''}</div>`;
+        return `  <div class="mh-q"><p class="mh-qt">${mark(a)}</p>${d && d.write ? `<textarea class="mh-write" placeholder="여기에 적어요" aria-label="${attr(plain(a))}"></textarea>` : ''}${c ? `<p class="mh-ans step"><b>예시 답</b> ${mark(c)}</p>` : ''}</div>`;
       }
       if (kind === 'quiz') {
         h += 60 + c.length * 70;
@@ -85,8 +91,10 @@ function sheetSlides(set, slide) {
       console.warn('알 수 없는 블록:', kind);
       return '';
     }).join('\n');
+    const legend = hl && set.legend ? `\n  <div class="mh-legend mh-sheet-legend"><span class="k">표시</span>${Object.entries(set.legend).map(([k, v]) => `<span><span class="mh-h${k}">${SW[k]}</span> ${v}</span>`).join('')}</div>` : '';
+    if (legend) h += 40;
     if (h > 520) console.warn(`활동지 ${pi + 1}장「${plain(pg.title)}」이 넘칠 수 있다(어림 ${h}px). 블록을 두 장으로 나눈다`);
-    slide(`sheet-${pi + 1}`, pg.sec || set.sheetSec || '활동', plain(pg.title), `  <h2>${pg.title}</h2>\n${html}`);
+    slide(`sheet-${pi + 1}`, pg.sec || set.sheetSec || '활동', plain(pg.title), `  <h2>${pg.title}</h2>${legend}\n${html}`);
   });
 }
 
@@ -185,16 +193,24 @@ function build(set, OUT) {
   }
 
   // ③ 어휘 · 핵심 개념 · 배경지식
-  if (set.vocab) {
-    for (let i = 0; i < set.vocab.length; i += 7) {
+  // 어휘가 적고 개념이 짧으면 한 장에 함께 둔다(아래가 비지 않게)
+  const cs = set.concepts || [];
+  const clen = cs.reduce((a, c) => a + plain(c[1]).length, 0);
+  const vocab = set.vocab || [];
+  const vlen = vocab.reduce((a, [w, m]) => a + plain(w + m).length, 0);
+  const vcard = (c) => `  <div class="mh-concept" data-ai="${c[2] || '핵심 개념'}"><span class="mh-w">${c[2] || '핵심 개념'} — ${c[0]}</span>${mark(c[1])}</div>`;
+  const together = vocab.length && vocab.length <= 4 && cs.length && cs.length <= 2 && vlen + clen <= 300;
+  if (together) {
+    slide('vocab-1', '③ 어휘·개념', '어휘 · 핵심 개념', `  <h2>어휘 · 핵심 개념</h2>\n  <ul class="mh-vocab" data-ai="어휘 뜻풀이">\n` +
+      vocab.map(([w, m]) => `    <li><span class="mh-w">${w}</span>${m}</li>`).join('\n') + `\n  </ul>\n` + cs.map(vcard).join('\n'));
+  } else if (vocab.length) {
+    for (let i = 0; i < vocab.length; i += 7) {
       slide(`vocab-${i / 7 + 1}`, '③ 어휘·개념', '어휘', `  <h2>어휘 — 이것만은 꼭 익히자</h2>\n  <ul class="mh-vocab" data-ai="어휘 뜻풀이">\n` +
-        set.vocab.slice(i, i + 7).map(([w, m]) => `    <li><span class="mh-w">${w}</span>${m}</li>`).join('\n') + `\n  </ul>`);
+        vocab.slice(i, i + 7).map(([w, m]) => `    <li><span class="mh-w">${w}</span>${m}</li>`).join('\n') + `\n  </ul>`);
     }
   }
   // 핵심 개념·배경지식: 짧으면 한 장에 둘
-  const cs = set.concepts || [];
-  const clen = cs.reduce((a, c) => a + plain(c[1]).length, 0);
-  if (cs.length === 2 && clen <= 420) {
+  if (together) { /* 위에서 어휘와 함께 실었다 */ } else if (cs.length === 2 && clen <= 420) {
     slide('concept-1', '③ 어휘·개념', '핵심 개념 · 배경지식', `  <h2>핵심 개념 · 배경지식</h2>\n` + cs.map((c) => `  <div class="mh-concept" data-ai="${c[2] || '핵심 개념'}"><span class="mh-w">${c[2] || '핵심 개념'} — ${c[0]}</span>${mark(c[1])}</div>`).join('\n'));
   } else cs.forEach((c, i) => {
     slide(`concept-${i + 1}`, '③ 어휘·개념', c[0], `  <h2>${c[2] || '핵심 개념'} — ${c[0]}</h2>\n  <div class="mh-concept" data-ai="${c[2] || '핵심 개념'}">${mark(c[1])}</div>`);
@@ -257,9 +273,11 @@ function build(set, OUT) {
       return { h, html: `    <li${i + 1 === q.answer ? ' class="ok"' : ''}><span class="t">${NUM[i]} ${t}</span><span class="r step">${r}</span></li>` };
     });
     const total = keyItems.reduce((a, x) => a + x.h, 0);
-    const parts = total > 440 ? [keyItems.slice(0, 3), keyItems.slice(3)] : [keyItems];
+    // 조금 넘치면 나누지 않고 촘촘하게(나누면 두 장 다 아래가 빈다), 많이 넘칠 때만 두 장
+    const tight = total > 500 && total <= 640;
+    const parts = total > 640 ? [keyItems.slice(0, 3), keyItems.slice(3)] : [keyItems];
     parts.forEach((part, pi) => slide(`q${q.n}-key${pi ? '-2' : ''}`, sec, `${q.n}번 정리${parts.length > 1 ? ` (${pi + 1}/2)` : ''}`,
-      `  <h2${keyLong ? ' class="mh-h2s"' : ''}>${q.n}. ${stemHtml(q)}</h2>\n  <ul class="mh-key${keyLong ? ' small' : ''}" data-ai="선지별 근거 요약">\n${part.map((x) => x.html).join('\n')}\n  </ul>`));
+      `  <h2${keyLong ? ' class="mh-h2s"' : ''}>${q.n}. ${stemHtml(q)}</h2>\n  <ul class="mh-key${keyLong || tight ? ' small' : ''}${tight ? ' tight' : ''}" data-ai="선지별 근거 요약">\n${part.map((x) => x.html).join('\n')}\n  </ul>`));
   });
 
   // 양식: 학교·선생님 PPT 양식은 set.style로 바꾼다. 비우면 기본(노란 테·흰 카드·파란 주석)

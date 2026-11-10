@@ -11,8 +11,8 @@
 
   // ---------- 화면 점검: 글자가 제 칸을 벗어나 겹치는지, 장(카드) 밖으로 나가는지 ----------
   // 장마다 잠깐 보이게 하고 단계(.step)를 모두 연 채로 잰다. 끝나면 원래 장으로 돌아간다.
-  // 결과: [{slide, code: 'mh-spill'|'mh-out', msg}]  (mh-spill: 칸을 벗어난 글자 → 옆 글과 겹침)
-  function layout({ margin = 26 } = {}) {
+  // 결과: [{slide, code: 'mh-spill'|'mh-out'|'mh-img-…'|'mh-sparse', msg}]  (mh-spill: 칸을 벗어난 글자 → 옆 글과 겹침, mh-sparse: 아래가 크게 빔)
+  function layout({ margin = 26, sparse = 0.55 } = {}) {
     const all = slides();
     const cur = all.find((s) => s.classList.contains('is-active'));
     const st = document.createElement('style');
@@ -58,6 +58,21 @@
         const box = im.parentElement.getBoundingClientRect();
         if ((t.right - box.right) / k > 3 || (t.bottom - box.bottom) / k > 3) out.push({ slide: si + 1, code: 'mh-img-spill', msg: `${si + 1}장: 그림 「${name}」이(가) 제 칸을 벗어나 옆 글을 덮는다` });
       });
+      // 여백: 단계를 다 연 뒤에도 내용이 장 위쪽에서 끝나 아래가 크게 비는지(표지·data-sparse-ok 장은 뺀다)
+      if (si > 0 && !s.matches('[data-sparse-ok], .cover, #cover')) {
+        let low = 0;
+        s.querySelectorAll('*').forEach((el) => {
+          if (el.closest('.ch-tb, [hidden], svg *')) return;
+          if (el.children.length) {   // 테두리·바탕이 있는 상자(판정 장의 지문 칸 등)는 상자 끝까지를 내용으로 본다
+            const cs = getComputedStyle(el);
+            if (!(parseFloat(cs.borderBottomWidth) > 0 && cs.borderBottomStyle !== 'none') && !/rgba?\((?!.*,\s*0\))/.test(cs.backgroundColor)) return;
+          }
+          const t = el.getBoundingClientRect();
+          if (t.height && t.width) low = Math.max(low, t.bottom);
+        });
+        const used = (low - sr.top) / k;
+        if (low && used < 720 * sparse) out.push({ slide: si + 1, code: 'mh-sparse', msg: `${si + 1}장: 내용이 위쪽 ${Math.round(used)}px에서 끝나 아래 ${Math.round(720 - used)}px가 빈다(글자를 키우거나 옆 장과 합치거나, 형광·주석·그림으로 채운다)` });
+      }
     });
     all.forEach((x) => x.classList.toggle('is-active', x === cur));
     st.remove();

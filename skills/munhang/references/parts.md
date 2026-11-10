@@ -135,6 +135,6 @@ munhang.js가 동작을 붙인다. 수업 HTML에는 구조와 `data-*` 속성�
 | `mh-img-alt` | 그림 설명(alt) 없음 | 무엇을 잘랐는지와 시험지 쪽(예: "13번 〈보기〉 그래프, 6쪽") |
 | `mh-img-broken` | 그림이 열리지 않음 | 파일 이름, `그림/` 폴더, 묶기를 확인 |
 
-화면 점검 `Munhang.layout()`은 그림도 잰다: `mh-img-out`(카드 밖으로 나가 잘림), `mh-img-spill`(제 칸을 벗어나 옆 글을 덮음), `mh-img-blur`(원래 크기보다 1.5배 넘게 늘어나 흐림 → `scale=3`으로 다시 자른다). `Munhang.figures()`는 장마다 그림 목록(장 번호, alt, 원래 크기, 열림 여부)을 준다. 시험지 쪽과 하나씩 대 볼 때 쓴다.
+화면 점검 `Munhang.layout()`은 그림도 잰다: `mh-img-out`(카드 밖으로 나가 잘림), `mh-img-spill`(제 칸을 벗어나 옆 글을 덮음), `mh-img-blur`(원래 크기보다 1.5배 넘게 늘어나 흐림 → `scale=3`으로 다시 자른다). `mh-sparse`는 단계를 다 연 뒤에도 내용이 장 위쪽(720px의 55%)에서 끝나 아래가 크게 비는 장이다(표지·`data-sparse-ok` 장은 뺀다, 기준은 `Munhang.layout({ sparse: 0.5 })`처럼 바꾼다). `Munhang.figures()`는 장마다 그림 목록(장 번호, alt, 원래 크기, 열림 여부)을 준다. 시험지 쪽과 하나씩 대 볼 때 쓴다.
 
 엔진 점검(`Exploragram.audit()`, 툴바 「점검」)도 함께 0으로 만든다. 넘침(`slide-overflow`)은 장을 나눠 고친다.
