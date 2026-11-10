@@ -39,8 +39,61 @@ const hText = (s) => Math.ceil(plain(s).length / 40) * 45 + 10;
 const hNote = (s) => Math.ceil(plain(s).length / 44) * 33 + 22;
 const BUDGET = 460;
 
+// ---------- 활동지·교과서 그대로(디지털 교과서) ----------
+// set.sheet = [{ title: '장 제목', sec: '목차 묶음(선택)', blocks: [ … ] }, …]  장 하나 = 화면 한 장
+//   ['text', '본문·활동지 글 그대로. {{답}}은 누르면 열리는 빈칸, [[2:구절]] 형광, **굵게**. 빈 줄은 문단 나눔']
+//   ['q', '물음 그대로', '예시 답(선택, →로 연다)', { write: true }]   write면 학생이 적는 칸을 둔다
+//   ['quiz', '물음', ['선지1', '선지2', …], 정답 번호, ['선지별 까닭', …](선택)]
+//   ['table', [['머리', '머리'], ['칸 {{답}}', '칸'], …]]   첫 줄이 머리
+//   ['box', '상자 제목', '자료 글']   (학습 목표, 보기, 참고 자료)
+//   ['img', '그림/파일.png', '그림 설명(alt)']
+const SHEET_CSS = `.mh-sheet { border: 2px solid var(--ppt-line, #BDBDBD); border-radius: 12px; padding: 14px 26px; background: #FFFFFF; font-size: 26px; line-height: 1.7; margin: 0 0 14px; }
+.mh-sheet p { margin: 0 0 6px; }
+.mh-q { margin: 0 0 14px; font-size: 26px; line-height: 1.6; }
+.mh-qt { font-size: 26px; font-weight: 700; margin: 0 0 6px; }
+.mh-q .short > p { display: none; }
+.mh-ans { color: var(--ppt-blue, #2B59C3); font-size: 24px; margin: 6px 0 0; padding-left: 14px; border-left: 4px solid var(--ppt-blue, #2B59C3); }
+.mh-box { border: 2px dashed var(--ppt-line, #BDBDBD); border-radius: 10px; padding: 10px 20px; font-size: 24px; line-height: 1.6; margin: 0 0 14px; }
+.mh-box .k { display: block; font-weight: 800; color: var(--ppt-blue, #2B59C3); margin-bottom: 2px; }
+section.slide table.compare.mh-sheet-t { font-size: 23px; margin: 0 0 14px; }
+`;
+function sheetSlides(set, slide) {
+  set.sheet.forEach((pg, pi) => {
+    let h = 0;
+    const html = pg.blocks.map((b, bi) => {
+      const [kind, a, c, d, e] = b;
+      if (kind === 'text') {
+        h += Math.ceil(plain(a).length / 40) * 44 + 40;
+        return `  <div class="mh-sheet">${String(a).split(/\n\n+/).map((t) => `<p>${mark(t).replace(/\n/g, '<br>')}</p>`).join('')}</div>`;
+      }
+      if (kind === 'q') {
+        h += Math.ceil(plain(a).length / 42) * 42 + (d && d.write ? 110 : 0) + (c ? Math.ceil(plain(c).length / 48) * 38 + 10 : 0) + 14;
+        return `  <div class="mh-q"><p class="mh-qt">${mark(a)}</p>${d && d.write ? `<div class="short" data-ph="여기에 적어요"><p>${attr(plain(a))}</p></div>` : ''}${c ? `<p class="mh-ans step"><b>예시 답</b> ${mark(c)}</p>` : ''}</div>`;
+      }
+      if (kind === 'quiz') {
+        h += 60 + c.length * 70;
+        return `  <p class="mh-qt">${mark(a)}</p>\n  <div class="quiz" data-q="s${pi + 1}-${bi + 1}">\n` +
+          c.map((o, i) => `    <button class="opt"${i + 1 === d ? ' data-ok' : ''}${e && e[i] ? ` data-why="${attr(e[i])}"` : ''}>${o}</button>`).join('\n') + '\n  </div>';
+      }
+      if (kind === 'table') {
+        h += a.length * 48 + 20;
+        const [head, ...rows] = a;
+        return `  <table class="compare mh-sheet-t"><thead><tr>${head.map((x) => `<th>${mark(x)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((x) => `<td>${mark(x)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      }
+      if (kind === 'box') { h += Math.ceil(plain(c).length / 46) * 38 + 50; return `  <div class="mh-box"><span class="k">${a}</span>${mark(c)}</div>`; }
+      if (kind === 'img') { h += 340; return `  <figure class="fig"><img src="${attr(a)}" alt="${attr(c || '')}" style="max-height:320px;width:auto;max-width:100%"></figure>`; }
+      console.warn('알 수 없는 블록:', kind);
+      return '';
+    }).join('\n');
+    if (h > 520) console.warn(`활동지 ${pi + 1}장「${plain(pg.title)}」이 넘칠 수 있다(어림 ${h}px). 블록을 두 장으로 나눈다`);
+    slide(`sheet-${pi + 1}`, pg.sec || set.sheetSec || '활동', plain(pg.title), `  <h2>${pg.title}</h2>\n${html}`);
+  });
+}
+
 function build(set, OUT) {
   const BASE = baseUrl || 'munhang';
+  set.paras = set.paras || [];
+  set.qs = set.qs || [];
   const body = set.paras.filter((p) => !p.bogi);
   const bogiOf = (n) => set.paras.filter((p) => p.bogi === n);
   const S = [];
@@ -93,6 +146,9 @@ function build(set, OUT) {
     const legend = set.legend ? `\n  <div class="mh-legend"><span class="k">표시</span>${Object.entries(set.legend).map(([k, v]) => `<span><span class="mh-h${k}">${SW[k]}</span> ${v}</span>`).join('')}<span><span class="mh-gloss core">파란 글</span> 주석(→로 연다)</span></div>` : '';
     slide('lead', '0. 독해 포인트', '독해 포인트', `  <h2>이 글은 무엇을 말할까?</h2>\n  <div class="mh-lead" data-ai="독해 포인트"><span class="k">독해 포인트</span>${set.lead}</div>\n  <p class="mh-theme step">주제 &nbsp;${set.theme}</p>${legend}`);
   }
+
+  // 활동지·교과서 그대로(디지털 교과서): set.sheet의 장을 그대로 싣는다. {{답}} 빈칸은 누르면 열린다
+  if (set.sheet) sheetSlides(set, slide);
 
   // ① 지문 분석: 문단(head가 있는 조각부터)별로, 높이를 어림해 장을 나눈다
   const blocks = [];
@@ -162,7 +218,7 @@ function build(set, OUT) {
   // ⑤ 문제 풀이
   const qStart = S.length;
   // 세트 권장 풀이 시간: 문항당 독서 100초, 문학 90초(30초 단위 올림). set.timer(초)로 바꾼다. 떠 있는 타이머(툴바 「타이머」)의 처음 시간이 된다
-  const timerSec = set.timer || Math.ceil((set.qs.length * (/문학/.test(set.kind || '') ? 90 : 100)) / 30) * 30;
+  const timerSec = set.timer || (!set.qs.length ? 300 : 0) || Math.ceil((set.qs.length * (/문학/.test(set.kind || '') ? 90 : 100)) / 30) * 30;
   set.qs.forEach((q) => {
     const sec = `⑤ ${q.n}번`;
     const neg = NEG.test(q.stem);
@@ -177,7 +233,7 @@ function build(set, OUT) {
       const w = firstSentence(why);
       return `    <button class="opt"${ok ? ' data-ok' : ''} data-why="${attr(ok && !/^맞다/.test(w) ? '맞다. ' + w : w)}">${t}</button>`;
     }).join('\n');
-    const quiz = `<div${long ? ' class="mh-tight"' : ''}><div class="quiz" data-q="${q.n}">\n${opts}\n  </div></div>`;
+    const quiz = `<div${long ? ' class="mh-tight"' : ''}><div class="quiz" data-q="${q.n}"${set.madeQs ? ' data-ai="자료로 만든 문항"' : ''}>\n${opts}\n  </div></div>`;
     if (!q.noPoll) slide(`q${q.n}-poll`, sec, `${q.n}번 고르기`, `  <h2${long ? ' class="mh-h2s"' : ''}>${q.n}. ${stemHtml(q)}</h2>\n  ` +
       (pair ? `<div class="mh-pair">\n  <div class="mh-read" data-src="src" data-paras="${bogi.map((p) => p.p).join(',')}" data-title="off"></div>\n  ${quiz}\n  </div>` : quiz));
     // 판정 장 탭: 근거가 있는 조각만(지문 순서대로) + <보기>
@@ -226,7 +282,7 @@ function build(set, OUT) {
 <html lang="ko" data-deck="${set.deck}" data-mh-timer="${timerSec}">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${exam ? exam + ' ' : ''}${set.range}번 · ${plain(String(set.topic).replace(/<br\s*\/?>/g, ' '))}</title>
+<title>${exam ? exam + ' ' : ''}${set.range}${/\d$/.test(set.range) ? "번" : ""} · ${plain(String(set.topic).replace(/<br\s*\/?>/g, ' '))}</title>
 <link rel="stylesheet" href="${BASE}/munhang.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/N-lifescience/exploragram@2.8.1/engine/exploragram.css">
 <link rel="stylesheet" href="${BASE}/kit.css">
@@ -238,18 +294,17 @@ function build(set, OUT) {
 section.slide > h2 small { font-size: 24px; color: #6B6B6B; }
 b.mh-boxw { border: 2px solid #333; padding: 0 4px; font-weight: 700; }
 .mh-read img, .mh-view img { max-height: 320px; width: auto; max-width: 100%; margin: 0 auto; }
+${set.sheet ? SHEET_CSS : ''}
 ${themeRules}${set.css || ''}
 </style>
 </head>
 <body data-theme="ppt">
 
-<template class="mh-src" id="src" data-title="${attr(set.title)}" data-ai="형광 범주">
-${set.paras.map(para).join('\n')}
-</template>
+${set.paras.length ? `<template class="mh-src" id="src" data-title="${attr(set.title || '')}" data-ai="형광 범주">\n${set.paras.map(para).join('\n')}\n</template>` : ''}
 
 <section class="slide cover" id="cover" data-title="표지">
   <div class="band"><p class="kicker">${[exam, subject, set.kind || '독서'].filter(Boolean).join(' · ')}</p></div>
-  <h1>${set.topic}<br>${set.range}번</h1>
+  <h1>${set.topic}<br>${set.range}${/\d$/.test(set.range) ? "번" : ""}</h1>
 </section>
 
 ${S.join('\n\n')}

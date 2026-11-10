@@ -12,6 +12,7 @@ const skillMd = strip(fs.readFileSync(path.join(skill, 'SKILL.md'), 'utf8'))
   .replace(/`node scripts\/[^`]+`/g, (m) => m + '(코드를 돌릴 수 있을 때만)');
 const parts = fs.readFileSync(path.join(skill, 'references', 'parts.md'), 'utf8').replaceAll('{{BASE}}', base);
 const setEx = fs.readFileSync(path.join(skill, 'assets', 'set-example.mjs'), 'utf8');
+const sheetEx = fs.readFileSync(path.join(skill, 'assets', 'set-example-sheet.mjs'), 'utf8');
 const template = fs.readFileSync(path.join(skill, 'assets', 'template.html'), 'utf8').replaceAll('"munhang/', '"' + base + '/');
 
 const out = `<!-- 자동 생성: node scripts/build-guide.mjs (손으로 고치지 않는다) -->
@@ -35,6 +36,13 @@ ${parts}
 
 \`\`\`js
 ${setEx}\`\`\`
+
+## 활동지 그대로 예시 (assets/set-example-sheet.mjs)
+
+활동지·교과서 본문을 '활동지 그대로(디지털 교과서)'로 고른 경우의 세트 꼴이다. 블록: \`text\`, \`q\`, \`quiz\`, \`table\`, \`box\`, \`img\`. '문항 만들기'를 고른 경우는 위 시험 세트와 같은 꼴에 \`madeQs: true\`를 더한다.
+
+\`\`\`js
+${sheetEx}\`\`\`
 
 ---
 
