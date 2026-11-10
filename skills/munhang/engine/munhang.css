@@ -1,0 +1,164 @@
+/*! munhang.css — 문항 수업 부품 모양 (exploragram 테마 변수 --accent를 따른다) */
+.mh-read, .mh-judge, .mh-map { --mh-ink: #222222; --mh-soft: #F4F7FA; --mh-line: #C9D6E2; --mh-hl: #FFE066; --mh-o: #1F7A4D; --mh-x: #C0392B; }
+
+/* 지문 읽기 */
+.mh-read { word-break: keep-all; }
+.mh-title { margin: 0 0 10px; font-size: 26px; font-weight: 800; color: var(--accent, #1878B8); }
+.mh-read > [data-para] { margin: 0 0 14px; font-size: 26px; line-height: 1.75; color: var(--mh-ink); }
+.mh-read > [data-para]::before, .mh-body > [data-para]::before { content: attr(data-mark); font-weight: 800; color: var(--accent, #1878B8); margin-right: 6px; }
+.mh-bogi { border: 2px solid #444; padding: 10px 18px 10px; position: relative; margin-top: 24px !important; }
+.mh-bogi::after { content: "<보기>"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #FFFFFF; padding: 0 10px; font-size: 22px; font-weight: 800; }
+.mh-poem { white-space: pre-line; }
+
+/* 선지 판정: 왼쪽 지문 보기, 오른쪽 선지 */
+.mh-judge { display: grid; grid-template-columns: 1fr 440px; gap: 24px; align-items: start; word-break: keep-all; }
+.mh-view { border: 2px solid var(--mh-line); border-radius: 14px; background: #FFFFFF; overflow: hidden; }
+.mh-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: var(--mh-soft); border-bottom: 2px solid var(--mh-line); }
+section.slide .mh-tab { min-height: 56px; min-width: 56px; padding: 4px 10px; font: inherit; font-size: 21px; font-weight: 700; border: 2px solid var(--mh-line); border-radius: 10px; background: #FFFFFF; color: var(--mh-ink); cursor: pointer; position: relative; }
+section.slide .mh-tab[aria-pressed="true"] { background: var(--accent, #1878B8); border-color: var(--accent, #1878B8); color: #FFFFFF; }
+.mh-tab.has-ev::after { content: ""; position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--mh-hl); border: 2px solid #B08900; }
+.mh-body { padding: 10px 16px; }   /* 스크롤하지 않는다: 문단 조각을 330자 이하로 나눈다 */
+.mh-body > [data-para] { margin: 0; font-size: 22px; line-height: 1.62; color: var(--mh-ink); }
+.mh-body .mh-bogi { margin-top: 18px !important; }
+mark.mh-hl { background: var(--mh-hl); color: inherit; padding: 0 1px; box-shadow: 0 3px 0 #E0A800; }
+
+.mh-side { min-width: 0; }
+.mh-stem { margin: 0 0 10px; font-size: 25px; font-weight: 800; line-height: 1.45; }
+.mh-ch { font-size: 24px; line-height: 1.5; }
+.mh-ct { margin: 0 0 8px; padding: 10px 14px; background: var(--mh-soft); border-radius: 12px; }
+.mh-ctl { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+section.slide .mh-ctl button { flex: 1 1 auto; min-height: 56px; padding: 4px 12px; font: inherit; font-size: 21px; font-weight: 700; border: 2px solid var(--mh-line); border-radius: 12px; background: #FFFFFF; color: var(--mh-ink); cursor: pointer; }
+section.slide .mh-ctl .mh-guess[aria-pressed="true"][data-g="o"] { background: var(--mh-o); border-color: var(--mh-o); color: #FFFFFF; }
+section.slide .mh-ctl .mh-guess[aria-pressed="true"][data-g="x"] { background: var(--mh-x); border-color: var(--mh-x); color: #FFFFFF; }
+section.slide .mh-ctl .mh-open { background: #FFF6DA; border-color: #E0A800; }
+.mh-verdict, .mh-why { display: none; }
+.mh-ch.is-open .mh-verdict, .mh-ch.is-open .mh-why { display: block; }
+.mh-verdict { margin: 0 0 4px; font-size: 24px; }
+.mh-o { color: var(--mh-o); } .mh-x { color: var(--mh-x); }
+.mh-res { font-size: 21px; color: #5C6B78; }
+.mh-why { margin: 0; font-size: 22px; line-height: 1.5; }
+
+/* 지문 구조도 */
+.mh-map { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mh-map > li { display: grid; grid-template-columns: 130px 1fr; gap: 14px; align-items: center; padding: 10px 16px; border: 2px solid var(--mh-line); border-radius: 14px; font-size: 24px; line-height: 1.45; background: #FFFFFF; position: relative; }
+.mh-map > li > b:first-child { font-size: 23px; color: var(--accent, #1878B8); }
+.mh-map > li[data-rel]::before { content: attr(data-rel); position: absolute; top: -17px; left: 150px; padding: 0 10px; background: #FFF6DA; border: 2px solid #E0A800; border-radius: 10px; font-size: 20px; font-weight: 700; line-height: 1.3; }
+.mh-map > li + li { margin-top: 8px; }
+
+/* 점검 단추 (장 밖) */
+.mh-badge { position: fixed; top: 10px; right: 10px; z-index: 99999; padding: 6px 14px; border: 0; border-radius: 999px; background: #C0392B; color: #FFFFFF; font: 700 15px/1.4 sans-serif; cursor: pointer; }
+.mh-dlg { max-width: 760px; border: 0; border-radius: 14px; padding: 18px; font: 15px/1.5 sans-serif; }
+.mh-dlg pre { white-space: pre-wrap; max-height: 60vh; overflow: auto; background: #F4F7FA; padding: 12px; border-radius: 10px; }
+.mh-dlg button { margin: 10px 8px 0 0; padding: 8px 14px; font: inherit; }
+@media print { .mh-badge, .mh-ctl { display: none; } .mh-verdict, .mh-why { display: block; } }
+
+/* 고르기 장: 왼쪽 지문 조각이나 <보기>, 오른쪽 선지(.quiz) */
+.mh-pair { display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: start; }
+.mh-pair .mh-read > [data-para] { font-size: 23px; line-height: 1.65; }
+.mh-pair .quiz .opt { font-size: 23px; }
+
+/* 선지가 긴 고르기 장 */
+.mh-tight .quiz .opt { font-size: 22px; line-height: 1.4; padding-top: 6px; padding-bottom: 6px; }
+
+/* ---------- 본문 주석 (읽기 장) ---------- */
+/* 밑줄: <span class="mh-ul">구절</span><span class="mh-gloss step">풀이</span> */
+.mh-ul { text-decoration: underline; text-decoration-color: #D9480F; text-decoration-thickness: 3px; text-underline-offset: 7px; }
+.mh-gloss { display: inline; margin: 0 4px; padding: 1px 8px; border-radius: 6px; background: #E6F3FA; color: #0B5F86; font-size: 21px; font-weight: 700; line-height: 1.9; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.mh-gloss.infer { background: #FCEDEC; color: #A93226; }
+.mh-gloss.infer::before { content: "그래서 "; }
+.mh-gloss.core::before { content: "↳ "; }
+/* 문단 요약: <span class="mh-sum step">…</span> (문단 끝) */
+.mh-sum { display: block; margin: 4px 0 0; text-align: right; color: #1F7A4D; font-size: 21px; font-weight: 800; line-height: 1.4; }
+.mh-sum::before { content: "▶ "; }
+
+/* 해제 · 주제 · 구성 */
+.mh-brief { display: grid; gap: 12px; font-size: 25px; line-height: 1.6; }
+.mh-brief > p { margin: 0; }
+.mh-brief .k { display: inline-block; margin-right: 10px; padding: 0 12px; border-radius: 999px; background: #333; color: #FFFFFF; font-size: 21px; font-weight: 800; vertical-align: 2px; }
+.mh-brief .k.t { background: #7A7A7A; }
+.mh-brief ul { margin: 0; padding-left: 1.1em; }
+
+/* 포인트 빈칸 흐름도: <ol class="mh-flow"><li>… <span class="blank">답</span> …</li></ol> */
+.mh-flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 30px; counter-reset: mhf; }
+.mh-flow > li { position: relative; padding: 10px 18px; background: #FBF4DF; border-radius: 10px; font-size: 24px; line-height: 1.5; text-align: center; }
+.mh-flow > li + li::before { content: "↓"; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 24px; line-height: 30px; color: #8C99A5; }
+.mh-point-h { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font-size: 27px; font-weight: 800; }
+.mh-point-h .rel { padding: 0 10px; border-radius: 6px; background: #8B5A2B; color: #FFFFFF; font-size: 20px; }
+
+/* ================= 지문 분석 (참고: 지문분석 HTML 양식) ================= */
+:root { --mh-h1: rgba(190,190,190,.55); --mh-h2: rgba(246,200,120,.6); --mh-h3: rgba(150,215,160,.55); --mh-h4: rgba(150,200,245,.55); --mh-h5: rgba(249,180,200,.6); }
+/* 범주별 형광: 1 회색(비판·거부) 2 주황(핵심 개념) 3 초록(대안·주장) 4 파랑(시간·과정) 5 분홍(의의·평가) — 범주 이름은 세트마다 범례로 정한다 */
+.mh-h1, .mh-h2, .mh-h3, .mh-h4, .mh-h5 { border-radius: 3px; padding: 1px 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.mh-h1 { background: var(--mh-h1); } .mh-h2 { background: var(--mh-h2); } .mh-h3 { background: var(--mh-h3); } .mh-h4 { background: var(--mh-h4); } .mh-h5 { background: var(--mh-h5); }
+.mh-read b, .mh-body b { font-weight: 800; }
+/* 문항 근거 꼬리표 (munhang.js가 data-qref 읽기 장에 붙인다) */
+.mh-qref { display: inline-block; margin: 0 2px; padding: 0 6px; border-radius: 5px; background: #C0392B; color: #FFFFFF; font-size: 20px; font-weight: 800; line-height: 1.3; vertical-align: 3px; white-space: nowrap; text-indent: 0; }
+.mh-qref.q1 { background: #1A6EB5; } .mh-qref.q2 { background: #1E8449; } .mh-qref.q3 { background: #6C3483; } .mh-qref.q4 { background: #9A6B06; }
+/* 문장 묶음 뒤 설명 상자 */
+.mh-notes { display: grid; gap: 8px; margin: 6px 0 14px 6px; }
+.mh-n { border-left: 5px solid #9DB4D4; background: #F4F7FC; border-radius: 0 8px 8px 0; padding: 6px 14px; font-size: 22px; line-height: 1.5; color: #1A3A5C; }
+.mh-n > b:first-child { margin-right: 8px; color: #0D7377; }
+.mh-n.infer { border-left-color: #E0A5A0; background: #FCF5F4; }
+.mh-n.infer > b:first-child { color: #C0392B; }
+.mh-plabel { display: inline-block; margin: 0 0 10px; padding: 2px 14px; border-radius: 6px; background: #1A3A5C; color: #FFFFFF; font-size: 22px; font-weight: 800; }
+/* 독해 포인트 · 범례 */
+.mh-lead { padding: 14px 20px; border-radius: 10px; background: #EEF3F8; border: 2px solid #CDDDEC; font-size: 24px; line-height: 1.6; }
+.mh-lead .k, .mh-legend .k { font-weight: 800; color: #1A3A5C; margin-right: 8px; }
+.mh-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 22px; line-height: 1.5; }
+/* 전체 구조 흐름 */
+.mh-rows { display: grid; gap: 10px; }
+.mh-row { display: grid; grid-template-columns: 120px auto 1fr; gap: 12px; align-items: center; font-size: 23px; line-height: 1.45; }
+.mh-row .tag { padding: 6px 0; border-radius: 8px; background: #B8860B; color: #FFFFFF; font-weight: 800; text-align: center; }
+.mh-row .item { padding: 6px 16px; border-radius: 999px; background: #1A3A5C; color: #FFFFFF; font-weight: 700; white-space: nowrap; }
+.mh-theme { margin-top: 14px; padding: 12px 18px; border-left: 6px solid #1A3A5C; border-radius: 0 10px 10px 0; background: #F0F4FF; color: #1A3A5C; font-size: 24px; font-weight: 700; line-height: 1.5; }
+/* 어휘 · 핵심 개념 · 배경지식 */
+.mh-vocab { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 23px; line-height: 1.5; }
+.mh-vocab .mh-w { font-weight: 800; color: #1A3A5C; margin-right: 10px; }
+.mh-concept { padding: 14px 20px; border-left: 6px solid #3F7D3F; border-radius: 0 10px 10px 0; background: #F6F9F5; font-size: 24px; line-height: 1.65; }
+.mh-concept + .mh-concept { margin-top: 14px; }
+.mh-concept .mh-w { display: block; font-weight: 800; color: #7D5A9C; }
+/* 만점 구조도 */
+.mh-struct { table-layout: auto !important; }
+.mh-struct th { white-space: normal; word-break: keep-all; width: 24%; min-width: 180px; }
+.mh-struct td, .mh-struct th { font-size: 22px; line-height: 1.5; }
+.mh-arrow { text-align: center; color: #6B6B6B; font-size: 22px; margin: 6px 0; }
+/* 촘촘하게: 선지 평균 38자 넘는 고르기 장(생성기가 붙임) */
+.mh-tight .quiz .opt { font-size: 21px; line-height: 1.3; padding-top: 4px; padding-bottom: 4px; }
+section.slide > h2.mh-h2s { font-size: 28px; }
+.mh-rows { gap: 8px; }
+.mh-row { font-size: 22px; }
+.mh-row .tag, .mh-row .item { padding-top: 4px; padding-bottom: 4px; }
+
+/* ---- 주석 줄 (참고: 하이데거 지문분석 PPT) — 문장 묶음 아래 한 줄, 파란 기울임 ---- */
+.mh-read .mh-gloss, .mh-gloss { display: block; margin: 2px 0 12px 28px; padding: 0; background: none; border-radius: 0; color: #2B59C3; font-size: 22px; font-weight: 500; font-style: italic; line-height: 1.45; text-indent: 0; }
+.mh-gloss.core::before, .mh-gloss.infer::before { content: "@ "; font-style: normal; font-weight: 800; }
+.mh-gloss.role::before { content: "→ "; font-style: normal; font-weight: 800; }
+.mh-gloss.infer { color: #2B59C3; background: none; }
+/* 문항 정리 장 */
+.mh-key { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.mh-key > li { font-size: 23px; line-height: 1.42; padding: 2px 8px; border-radius: 6px; }
+.mh-key > li.ok > .t { background: #CDEBD0; font-weight: 800; }
+.mh-key > li.ok > .t::after { content: "  ◀ 정답"; font-weight: 800; }
+.mh-key .r { display: block; margin-left: 30px; color: #2B59C3; font-size: 21px; font-style: italic; }
+.mh-key .r::before { content: "➜ "; font-style: normal; font-weight: 800; }
+.mh-key.small > li { font-size: 21px; }
+.mh-key.small .r { font-size: 20px; }
+/* 판정 장 선지 칸: 긴 선지도 들어가게 */
+.mh-ch { font-size: 22px; line-height: 1.45; }
+.mh-ct { padding: 8px 12px; }
+.mh-why { font-size: 21px; }
+/* 선지가 긴 판정 장 */
+.mh-judge.mh-tight .mh-ch { font-size: 20px; line-height: 1.4; }
+.mh-judge.mh-tight .mh-why { font-size: 19px; line-height: 1.4; }
+/* 근거 모아 보기: 근거가 두 곳 이상인 선지 */
+.mh-ex-i { margin: 0 0 14px; }
+.mh-ex-t { display: inline-block; margin-bottom: 4px; padding: 2px 12px; border-radius: 999px; background: #333333; color: #FFFFFF; font-size: 18px; font-weight: 700; }
+.mh-ex-i > p { margin: 0 0 6px; font-size: 24px; line-height: 1.55; color: var(--mh-ink); }
+.mh-ex-note { margin: 4px 0 0; font-size: 18px; color: #777777; }
+
+
+/* 시험지에서 잘라 온 그림(〈보기〉 그림·표·도표) */
+.mh-read img, .mh-body img, .mh-ex img { display: block; max-width: 100%; height: auto; margin: 6px auto; }
+
+/* 공유판: 실시간 수업 단추를 숨긴다(묶지 않고 열어도) */
+.ch-tb-btn[aria-label="실시간"] { display: none !important; }

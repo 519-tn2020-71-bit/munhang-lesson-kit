@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko" data-deck="mock-YYYY-MM-NN-NN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OOOO학년도 O월 모의고사 NN~NN번</title>
+<link rel="stylesheet" href="munhang/munhang.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/N-lifescience/exploragram@2.8.1/engine/exploragram.css">
+<link rel="stylesheet" href="munhang/kit.css">
+<script defer src="munhang/munhang.js"></script>
+<script defer src="munhang/kit.js"></script>
+<script defer src="https://cdn.jsdelivr.net/gh/N-lifescience/exploragram@2.8.1/engine/exploragram.js"></script>
+<style>
+body[data-theme="ppt"] { --accent: #1D4E89; --tab: #1D4E89; --tab-ink: #FFFFFF; }
+.mh-note { display: inline-block; margin-left: 6px; padding: 0 10px; border-radius: 8px; background: #FFF6DA; border: 2px solid #E0A800; font-size: 21px; font-weight: 700; line-height: 1.4; }
+</style>
+</head>
+<body data-theme="ppt">
+
+<!-- 지문: 시험지 글 그대로. 문단 조각은 420자 이하 -->
+<template class="mh-src" id="s1" data-title="[NN~NN] 다음 글을 읽고 물음에 답하시오." data-ai="문단 꼬리표">
+  <p data-para="1">…<span class="mh-note step">화제</span></p>
+  <p data-para="2">…</p>
+  <div data-para="보기" class="mh-bogi"><p>…</p></div>
+</template>
+
+<section class="slide cover" id="cover" data-title="표지">
+  <div class="band"><p class="kicker">OOOO학년도 O월 모의고사 · 국어</p></div>
+  <h1>지문 제목<br>NN~NN번</h1>
+</section>
+
+<section class="slide" id="s1-read1" data-sec="1. 지문 읽기" data-title="1~2문단">
+  <h2>문단마다 무엇을 말할까?</h2>
+  <div class="mh-read" data-src="s1" data-paras="1-2"></div>
+</section>
+
+<section class="slide" id="s1-map" data-sec="1. 지문 읽기" data-title="지문 구조도">
+  <h2>지문은 어떻게 짜여 있을까?</h2>
+  <ol class="mh-map" data-ai="구조도">
+    <li class="step"><b>1문단</b><span>…</span></li>
+    <li class="step" data-rel="원리 설명"><b>2문단</b><span>…</span></li>
+  </ol>
+</section>
+
+<section class="slide" id="qNN-poll" data-sec="2. NN번" data-title="NN번 고르기">
+  <h2>NN. 발문 그대로</h2>
+  <div class="quiz" data-q="NN">
+    <button class="opt" data-why="…">선지 ①</button>
+    <button class="opt" data-why="…">선지 ②</button>
+    <button class="opt" data-ok data-why="맞다. …">선지 ③</button>
+    <button class="opt" data-why="…">선지 ④</button>
+    <button class="opt" data-why="…">선지 ⑤</button>
+  </div>
+</section>
+
+<section class="slide" id="qNN-judge" data-sec="2. NN번" data-title="NN번 선지 판정">
+  <h2>선지마다 근거를 찾아보자</h2>
+  <div class="mh-judge" data-src="s1" data-q="NN" data-answer="3">
+    <div class="mh-view"></div>
+    <div class="mh-side">
+      <p class="mh-stem">NN. 발문 그대로</p>
+      <div class="reveal" data-stops="시작|①|②|③|④|⑤">
+        <p data-only="0" style="font-size:24px">→를 누르면 선지가 하나씩 나온다. ○, ✕를 먼저 고른 뒤 「판정과 근거」를 누르자.</p>
+        <div class="mh-ch" data-only="1" data-ox="o" data-ev="1|지문 구절 그대로">
+          <p class="mh-ct">① …</p><p class="mh-why">…</p></div>
+        <!-- ②~⑤ 같은 꼴 -->
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

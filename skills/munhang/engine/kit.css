@@ -1,0 +1,29 @@
+/* kit.css — exploragram 수업 공용 교실 도구(kit.js의 짝) */
+
+/* 툴바: 필요한 버튼만 — 이전·다음 / 손·펜·형광펜·지우개·레이저 / 되돌리기 / 편집·타이머·목차·전체 화면 */
+.ch-tb-style, .ch-tb-board, .ch-tb-class,
+.ch-tb-btn[aria-label="이 장 지우기"], .ch-tb-btn[aria-label="위치"],
+.ch-tb-btn[aria-label="접기"], .ch-tb-btn[aria-label="설정"], .ch-tb-btn[aria-label="색"],
+.ch-tb-btn[aria-label="반"], .ch-tb-btn[aria-label="슬라이드"], .ch-tb-btn[aria-label="칠판"] { display: none !important; }
+/* 공유판: 실시간 수업 단추는 늘 숨긴다(엔진에서도 떼어 냄) */
+.ch-tb-btn[aria-label="실시간"] { display: none !important; }
+
+
+/* 떠 있는 타이머(툴바 「타이머」): 장 밖 화면 위에 뜬다 */
+.mh-ftimer { position: fixed; top: 16px; right: 16px; z-index: 70; width: 300px; padding: 0 14px 14px; border-radius: 16px; background: #FFFFFF; color: #222222; box-shadow: 0 10px 30px rgba(0,0,0,.28); border: 2px solid #333333; font-family: var(--ch-font, system-ui, sans-serif); }
+.mh-ftimer[hidden] { display: none; }
+.mh-ft-bar { display: flex; align-items: center; justify-content: space-between; margin: 0 -14px 6px; padding: 8px 10px 8px 16px; border-bottom: 1px solid #E3E3E3; font-size: 15px; font-weight: 700; color: #666666; cursor: grab; touch-action: none; user-select: none; }
+.mh-ft-x { border: 0; background: none; font-size: 18px; color: #888888; cursor: pointer; min-width: 36px; min-height: 36px; }
+.mh-ft-face { display: block; text-align: center; font-size: 64px; font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.mh-ft-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 8px; }
+.mh-ft-row button { min-height: 40px; padding: 4px 12px; border: 2px solid #CCCCCC; border-radius: 10px; background: #FFFFFF; font: inherit; font-size: 16px; font-weight: 700; color: #333333; cursor: pointer; }
+.mh-ft-row .mh-ft-go { background: #333333; border-color: #333333; color: #FFFFFF; min-width: 76px; }
+.mh-ft-pre button { font-size: 15px; min-height: 36px; padding: 2px 10px; }
+.mh-ft-pre .rec { border-color: #E2B93B; background: #FFF8D6; }
+.mh-ftimer.is-end { border-color: #C0392B; animation: mh-ft-blink 0.8s steps(2) 6; }
+.mh-ftimer.is-end .mh-ft-face { color: #C0392B; }
+@keyframes mh-ft-blink { 50% { background: #FDE2DF; } }
+.ch-tb-btn.mh-ft-on { color: #F5D862; }
+@media print { .mh-ftimer { display: none !important; } }
+/* 엔진 2.8부터 생긴 엔진 타이머 단추는 숨긴다(떠 있는 타이머 하나만 쓴다) */
+.ch-tb-btn[data-name="timer"] { display: none !important; }

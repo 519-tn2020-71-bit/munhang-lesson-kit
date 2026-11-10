@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- PDF 한 쪽의 일부를 그림으로 잘라 보이는 도구(pdf.js). 시험지의 그림·표·도표를 수업 파일에 넣을 때 쓴다.
+     쓰기(로컬 서버로 연다): pdfcrop.html?pdf=/시험지.pdf&page=5&grid=1      ← 쪽 전체 + 5% 눈금(자리 찾기)
+                             pdfcrop.html?pdf=/시험지.pdf&page=5&x=.1&y=.2&w=.35&h=.15&scale=3   ← 그 부분만(쪽 너비·높이에 대한 비율)
+     저장: node scripts/pngsink.mjs <폴더> 를 띄우고 주소 끝에 &save=이름.png 를 붙여 열면 그 폴더에 PNG로 저장된다. 끝나면 제목이 'done'. -->
+<html lang="ko"><head><meta charset="utf-8"><title>…</title>
+<style>html,body{margin:0;background:#fff}canvas{display:block}#g{position:absolute;left:0;top:0;pointer-events:none}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head><body><canvas id="c"></canvas><canvas id="g"></canvas>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const doc = await pdfjsLib.getDocument(q.get('pdf')).promise;
+  const page = await doc.getPage(+q.get('page') || 1);
+  const scale = +q.get('scale') || (q.has('x') ? 3 : 1.2);
+  const vp = page.getViewport({ scale });
+  const full = document.createElement('canvas');
+  full.width = vp.width; full.height = vp.height;
+  // intent 'print': 화면용 그리기(requestAnimationFrame)를 쓰지 않아 창이 가려지거나 헤드리스여도 멈추지 않는다
+  await page.render({ canvasContext: full.getContext('2d'), viewport: vp, intent: 'print' }).promise;
+  const c = document.getElementById('c');
+  const x = +q.get('x') || 0, y = +q.get('y') || 0, w = +q.get('w') || 1, h = +q.get('h') || 1;
+  c.width = Math.round(vp.width * w); c.height = Math.round(vp.height * h);
+  c.getContext('2d').drawImage(full, -Math.round(vp.width * x), -Math.round(vp.height * y));
+  if (q.get('grid')) {   // 자리 찾기용 5% 눈금
+    const g = document.getElementById('g'); g.width = c.width; g.height = c.height;
+    const k = g.getContext('2d'); k.font = '12px sans-serif';
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20;
+      k.strokeStyle = i % 2 ? 'rgba(255,0,0,.25)' : 'rgba(255,0,0,.6)';
+      k.beginPath(); k.moveTo(c.width * t, 0); k.lineTo(c.width * t, c.height); k.stroke();
+      k.beginPath(); k.moveTo(0, c.height * t); k.lineTo(c.width, c.height * t); k.stroke();
+      if (i % 2 === 0) { k.fillStyle = 'red'; k.fillText(t.toFixed(1), c.width * t + 2, 12); k.fillText(t.toFixed(1), 2, c.height * t - 2); }
+    }
+  }
+  document.body.dataset.size = c.width + 'x' + c.height;
+  // &save=이름.png&sink=http://localhost:8790 이면 그림을 저장 서버(pngsink.mjs)로 보낸다
+  if (q.get('save')) {
+    const r = await fetch((q.get('sink') || 'http://localhost:8790') + '/save?name=' + encodeURIComponent(q.get('save')), { method: 'POST', body: c.toDataURL('image/png') });
+    document.body.dataset.saved = await r.text();
+  }
+  document.title = 'done';
+  window.__size = [c.width, c.height];
+})().catch((e) => { document.title = 'error: ' + e.message; });
+</script></body></html>
