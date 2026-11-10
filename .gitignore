@@ -1,7 +1,6 @@
 # 엔진은 각자 받는다(N-lifescience 저작물, 재배포 허락 필요)
 skills/munhang/engine/vendor/
-# 엔진이 들어간 묶인 수업 파일
-examples/국어예시_*.html
+# 엔진이 들어간 묶인 수업 파일(올리는 예시는 --base로 만든 가벼운 HTML)
 *-바로보기.html
 # 시험 자료는 올리지 않는다
 *.pdf

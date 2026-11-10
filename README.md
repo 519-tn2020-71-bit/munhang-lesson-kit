@@ -6,7 +6,17 @@
 
 이 공유판에는 **실시간 수업 기능(학생 기기가 교사 화면을 따라오고 답이 모이는 기능)이 없습니다.** 전자칠판이나 학생 기기 없이 TV·빔프로젝터·노트북으로 수업하는 교실을 생각한 판입니다. 수업 파일은 외부 서버에 아무것도 보내지 않습니다.
 
-먼저 **`examples/국어예시_도서분류법.html`** 을 열어 보세요(직접 쓴 짧은 지문으로 만든 예시). 묶은 파일은 저작권 때문에 압축 파일에 넣지 않았으니, 아래 「만들기」의 명령 한 줄로 직접 만들어 봅니다.
+## 예시 먼저 보기
+
+| 파일 | 내용 |
+|---|---|
+| `examples/모의고사예시/2026-10_10-13_드론자세제어.html` | **실제 모의고사 분석 예시.** 2026학년도 10월 고3 전국연합학력평가 국어 10~13번(드론의 자세 제어 시스템). 형광·주석, 전체 구조, 어휘, 구조도, 익스플로라그램 2장(P·I 제어, 상보 필터), 문항별 고르기·판정·정리까지 33장 |
+| `examples/모의고사예시/2026-10_10-13_드론자세제어.mjs` | 위 수업의 세트 데이터. AI가 실제로 쓰는 것은 이 파일이다 |
+| `examples/국어예시_도서분류법.html` · `skills/munhang/assets/set-example.mjs` | 직접 쓴 짧은 지문으로 만든 작은 예시(구조를 익히기 좋음) |
+
+- 예시 HTML은 엔진과 부품을 인터넷(jsDelivr)에서 불러오는 가벼운 파일이라 **열 때 인터넷이 필요**합니다. 받아서 더블클릭하면 됩니다.
+- 인터넷 없이 쓰는 한 파일이 필요하면 `node skills/munhang/scripts/gen.mjs examples/모의고사예시/2026-10_10-13_드론자세제어.mjs`로 직접 만듭니다(엔진까지 파일 안에, 실시간 없음).
+- 모의고사 예시의 지문과 문항의 저작권은 출제 기관에 있습니다. 수업 참고용으로만 쓰고, 지문·문항을 따로 떼어 다시 배포하지 마세요.
 
 ## 수업 파일에 들어가는 장면
 
@@ -91,14 +101,15 @@ node skills/munhang/scripts/gen.mjs skills/munhang/assets/set-example.mjs --out 
 | `skills/munhang/assets/template.html` | HTML을 직접 쓸 때의 뼈대 |
 | `skills/munhang/references/parts.md` | 부품 사전과 점검 코드 |
 | `skills/munhang/engine/` | munhang.css·js(지문 복사, 근거 형광, 선지 판정, 문항·그림 점검), kit.css·js(툴바 정리, 떠 있는 타이머, 폰 쓸어넘기기, 화면 점검), ppt.css(기본 양식) |
-| `skills/munhang/scripts/` | gen.mjs(세트 → HTML), bundle.mjs(한 파일로 묶기), hwpx2txt.mjs, serve.mjs(미리보기), pdfcrop.html·pngsink.mjs(그림 자르기), explore-eval.mjs(익스플로라그램 계산 확인), build-guide.mjs(합본 지침 다시 만들기) |
+| `skills/munhang/scripts/` | gen.mjs(세트 → HTML, `--base 주소`면 묶지 않은 가벼운 HTML), bundle.mjs(한 파일로 묶기), hwpx2txt.mjs, serve.mjs(미리보기), pdfcrop.html·pngsink.mjs(그림 자르기), explore-eval.mjs(익스플로라그램 계산 확인), build-guide.mjs(합본 지침 다시 만들기) |
 | `agents/munhang-content-reviewer.md` | 내용 검토 에이전트(Claude Code용) |
 | `examples/sample-library.html` | HTML을 직접 쓴 예시(같은 지문) |
+| `examples/모의고사예시/` | 실제 모의고사 분석 예시(세트 데이터와 HTML) |
 
 지침을 고쳤으면 `node skills/munhang/scripts/build-guide.mjs`로 합본 지침을 다시 만듭니다.
 
 ## 저작권과 나누기
 
 - 모의고사·수능 지문과 문항은 평가원·교육청의 저작물입니다. 그것이 들어간 세트 파일과 수업 HTML은 **자기 수업에만** 쓰고 인터넷(블로그, 공개 저장소, 공개 드라이브)에 올리지 않습니다.
-- 이 폴더에는 시험 지문과 그 변환본, 개인 설정, 키가 들어 있지 않습니다. 다른 선생님께 넘길 때도 시험지·세트 파일·수업 HTML은 빼고 이 폴더만 넘깁니다.
-- exploragram 엔진은 N-lifescience의 저작물입니다(수업에 쓰는 것은 자유, 엔진 코드를 고쳐 다시 배포하려면 제작자의 허락이 필요). 그래서 이 폴더에는 엔진 파일을 넣지 않았고, 만들 때 각자 받습니다.
+- 이 저장소에는 개인 설정과 키가 없습니다. 시험 지문은 `examples/모의고사예시/`의 분석 예시 한 세트에만 들어 있습니다(출처: 2026학년도 10월 고3 전국연합학력평가 국어).
+- exploragram 엔진은 N-lifescience의 저작물입니다(수업에 쓰는 것은 자유, 엔진 코드를 고쳐 다시 배포하려면 제작자의 허락이 필요). 그래서 이 저장소에는 엔진 파일을 넣지 않았습니다. 예시 HTML은 엔진을 제작자의 배포 주소에서 불러오고, 한 파일로 만들 때는 각자 받습니다.

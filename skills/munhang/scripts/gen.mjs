@@ -1,6 +1,8 @@
 // 지문 세트 데이터(.mjs) → 문항 수업 HTML 한 파일 (munhang 공유판 · 국어 예시 양식)
 // 흐름: 표지 → 독해 포인트 → ① 지문 분석(문단별) → ② 전체 구조 → ③ 어휘·핵심 개념·배경지식 → ④ 만점 구조도 → ⑤ 문제 풀이(고르기·판정·정리)
-// 쓰기: node scripts/gen.mjs 세트.mjs [다른 세트 …] [--out 폴더]
+// 쓰기: node scripts/gen.mjs 세트.mjs [다른 세트 …] [--out 폴더] [--base 주소]
+//   --base: 묶지 않고, munhang 파일과 엔진을 인터넷 주소에서 부르는 가벼운 HTML을 만든다(공개 저장소에 올릴 예시용, 열 때 인터넷 필요).
+//           예: --base https://cdn.jsdelivr.net/gh/519-tn2020-71-bit/munhang-lesson-kit@main/skills/munhang/engine
 //   결과 HTML은 --out 폴더(없으면 세트 파일이 있는 폴더)에 생기고, 그 자리에서 한 파일로 묶인다(엔진 포함, 실시간 없음).
 //   시험지에서 자른 그림은 결과 폴더의 그림/ 안에 두고 지문에 <img src="그림/…png" alt="…">로 쓴다.
 //   양식: 기본은 노란 테·흰 카드 PPT 양식(engine/ppt.css). 학교·선생님 PPT 양식은 세트의 style로 색·글꼴을 바꾼다.
@@ -38,6 +40,7 @@ const hNote = (s) => Math.ceil(plain(s).length / 44) * 33 + 22;
 const BUDGET = 460;
 
 function build(set, OUT) {
+  const BASE = baseUrl || 'munhang';
   const body = set.paras.filter((p) => !p.bogi);
   const bogiOf = (n) => set.paras.filter((p) => p.bogi === n);
   const S = [];
@@ -223,13 +226,13 @@ function build(set, OUT) {
 <html lang="ko" data-deck="${set.deck}" data-mh-timer="${timerSec}">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${exam ? exam + ' ' : ''}${set.range}번 · ${plain(set.topic)}</title>
-<link rel="stylesheet" href="munhang/munhang.css">
+<title>${exam ? exam + ' ' : ''}${set.range}번 · ${plain(String(set.topic).replace(/<br\s*\/?>/g, ' '))}</title>
+<link rel="stylesheet" href="${BASE}/munhang.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/N-lifescience/exploragram@2.8.1/engine/exploragram.css">
-<link rel="stylesheet" href="munhang/kit.css">
-<link rel="stylesheet" href="munhang/ppt.css">
-<script defer src="munhang/munhang.js"></script>
-<script defer src="munhang/kit.js"></script>
+<link rel="stylesheet" href="${BASE}/kit.css">
+<link rel="stylesheet" href="${BASE}/ppt.css">
+<script defer src="${BASE}/munhang.js"></script>
+<script defer src="${BASE}/kit.js"></script>
 <script defer src="https://cdn.jsdelivr.net/gh/N-lifescience/exploragram@2.8.1/engine/exploragram.js"></script>
 <style>
 section.slide > h2 small { font-size: 24px; color: #6B6B6B; }
@@ -257,15 +260,18 @@ ${S.join('\n\n')}
   const file = path.join(OUT, set.file);
   fs.writeFileSync(file, html);
   // 한 파일로 묶는다: munhang·kit·ppt.css와 엔진, 그림까지 파일 안에 넣는다(실시간 없음)
-  execFileSync(process.execPath, [BUNDLE, file, '--out', file], { stdio: 'inherit' });
+  if (!baseUrl) execFileSync(process.execPath, [BUNDLE, file, '--out', file], { stdio: 'inherit' });
+  else if (/<img[^>]*src="(?!data:|https?:)/.test(html)) console.warn('그림이 있는 세트다. --base로 만든 파일은 그림/ 폴더를 옆에 함께 두어야 보인다.');
   console.log(set.file, S.length + 1 + '장');
 }
 
 const argv = process.argv.slice(2);
 const oi = argv.indexOf('--out');
+const bi = argv.indexOf('--base');
+const baseUrl = bi >= 0 ? argv[bi + 1].replace(/\/+$/, '') : '';
 const outDir = oi >= 0 ? path.resolve(argv[oi + 1]) : null;
-const files = argv.filter((a, i) => !a.startsWith('--') && i !== oi + 1);
-if (!files.length) { console.error('쓰기: node scripts/gen.mjs 세트.mjs [다른 세트 …] [--out 폴더]'); process.exit(1); }
+const files = argv.filter((a, i) => !a.startsWith('--') && (oi < 0 || i !== oi + 1) && (bi < 0 || i !== bi + 1));
+if (!files.length) { console.error('쓰기: node scripts/gen.mjs 세트.mjs [다른 세트 …] [--out 폴더] [--base 주소]'); process.exit(1); }
 for (const f of files) {
   const set = (await import(pathToFileURL(path.resolve(f)).href + '?t=' + Date.now())).default;
   const out = outDir || path.dirname(path.resolve(f));
